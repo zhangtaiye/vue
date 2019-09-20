@@ -1,0 +1,36 @@
+1.request.js 接口请求
+D:\githubCode\vue-element-admin\src\router\index.js 路由
+D:\githubCode\vue-element-admin\mock\user.js // 模拟接口
+
+
+三个接口
+
+
+login
+response
+code: 200
+data: {token: "admin-token"}
+
+getInfo
+response
+code: 200
+data {
+    avatar: "https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif"
+    introduction: "I am a super administrator"
+    name: "Super Admin"
+    roles: ["admin"]
+}
+
+logout
+response
+ code: 200
+data {
+   
+    data: "success"
+}
+
+接口参照
+D:\githubCode\vue-element-admin\src\api\article.js
+页面
+D:\githubCode\vue-element-admin\src\views\example\list.vue
+登录

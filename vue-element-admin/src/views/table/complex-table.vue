@@ -1,12 +1,12 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.orderId" placeholder="系统订单号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" clearable/>
-      <el-input v-model="listQuery.platformOrderId" placeholder="平台订单号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" clearable/>
+      <el-input v-model="listQuery.orderId" placeholder="系统订单号" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.platformOrderId" placeholder="平台订单号" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-       <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         导出
       </el-button>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-reset" @click="resetHandle">
@@ -14,82 +14,62 @@
       </el-button>
     </div>
 
-    <el-table
-      :key="tableKey"
-      v-loading="listLoading"
-      :data="list"
-      border
-      fit
-      highlight-current-row
-      style="width: 100%;"
-      @sort-change="sortChange"
-      :header-cell-style="tableHeaderColor"
-    >
-     <el-table-column type="expand" >
-       <template slot-scope="scope">
-          <el-table
-              :key="tableKey"
-              v-loading="listLoading"
-              :data="scope.row.orderItems"
-              border
-              fit
-              highlight-current-row
-              style="width: 100%;"
-              @sort-change="sortChange"
-              :header-cell-style="tableHeaderColor2"
-              :row-style="tableRowStyle"
-          >
+    <el-table :key="tableKey" ref="multipleTable" v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%;" :header-cell-style="tableHeaderColor" @sort-change="sortChange">
+      <el-table-column type="selection" />
+      <el-table-column type="expand">
+        <template slot-scope="scope">
+          <el-table :key="tableKey" v-loading="listLoading" :data="scope.row.orderItems" border fit highlight-current-row style="width: 100%;" :header-cell-style="tableHeaderColor2" :row-style="tableRowStyle" @sort-change="sortChange">
 
-          <el-table-column label="SKU" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.productSku }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="SKU" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.productSku }}</span>
+              </template>
+            </el-table-column>
 
-          <el-table-column label="币种" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.currency }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="币种" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.currency }}</span>
+              </template>
+            </el-table-column>
 
-          <el-table-column label="产品单价" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.productPrice }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="产品单价" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.productPrice }}</span>
+              </template>
+            </el-table-column>
 
-          <el-table-column label="售出数量" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.saleQuantity }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="售出数量" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.saleQuantity }}</span>
+              </template>
+            </el-table-column>
 
-          <el-table-column label="售出总价" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.salePrice }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="售出总价" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.salePrice }}</span>
+              </template>
+            </el-table-column>
 
-          <el-table-column label="成交费" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.finalValueFee }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="成交费" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.finalValueFee }}</span>
+              </template>
+            </el-table-column>
 
-          <el-table-column label="物流跟踪号" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.shippingTrackingNumber }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="物流跟踪号" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.shippingTrackingNumber }}</span>
+              </template>
+            </el-table-column>
 
-          <el-table-column label="备注" width="200px" align="center">
-            <template slot-scope="item">
-              <span>{{ item.row.remark }}</span>
-            </template>
-          </el-table-column>
+            <el-table-column label="备注" width="200px" align="center">
+              <template slot-scope="item">
+                <span>{{ item.row.remark }}</span>
+              </template>
+            </el-table-column>
 
-        </el-table>
-      </template>
+          </el-table>
+        </template>
       </el-table-column>
       <el-table-column label="系统订单号" prop="orderId" align="center" width="200">
         <template slot-scope="scope">
@@ -123,7 +103,7 @@
       </el-table-column>
       <el-table-column label="发货日期" width="300px" align="center">
         <template slot-scope="scope">
-          <span v-if="scope.row.deliverDate===null"></span>
+          <span v-if="scope.row.deliverDate===null" />
           <span v-else>{{ scope.row.deliverDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
@@ -398,6 +378,7 @@ export default {
         const tHeader = ['系统订单号', '平台订单号', '卖家账号', '币种', '订单总金额']
         const filterVal = ['orderId', 'platformOrderId', 'sellerId', 'currency', 'totalPrice']
         const data = this.formatJson(filterVal, this.list)
+        console.log(this.$refs.multipleTable.selection)
         excel.export_json_to_excel({
           header: tHeader,
           data,
@@ -407,7 +388,14 @@ export default {
       })
     },
     formatJson(filterVal, jsonData) {
-      return jsonData.map(v => filterVal.map(j => {
+      const selectionData = this.$refs.multipleTable.selection
+      let newJsonData = []
+      if (selectionData === undefined || selectionData.length <= 0) {
+        newJsonData = jsonData
+      } else {
+        newJsonData = selectionData
+      }
+      return newJsonData.map(v => filterVal.map(j => {
         if (j === 'timestamp') {
           return parseTime(v[j])
         } else {

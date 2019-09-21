@@ -3,7 +3,9 @@
     <div class="filter-container">
       <el-input v-model="listQuery.orderId" placeholder="系统订单号" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.platformOrderId" placeholder="平台订单号" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
-      <el-date-picker v-model="deliverDate" type="daterange" align="right" style="width: 400px;" class="filter-item" unlink-panels range-separator="至" start-placeholder="发货日期" end-placeholder="发货日期" :picker-options="pickerOptions" />
+      <el-date-picker v-model="listQuery.fromDeliverDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="发货开始日期" align="right" class="filter-item" unlink-panels />
+      <el-date-picker v-model="listQuery.toDeliverDate" value-format="yyyy-MM-dd HH:mm:ss" type="datetime" placeholder="发货结束日期" align="right" class="filter-item" unlink-panels />
+
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -105,12 +107,12 @@
       <el-table-column label="发货日期" width="300px" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.deliverDate===null" />
-          <span v-else>{{ scope.row.deliverDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span v-else>{{ scope.row.deliverDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" width="300px" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.creationDate | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ scope.row.creationDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -240,34 +242,9 @@ export default {
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
       downloadLoading: false,
-      deliverDate: '',
-      pickerOptions: {
-        shortcuts: [{
-          text: '最近一周',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近一个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
-            picker.$emit('pick', [start, end])
-          }
-        }, {
-          text: '最近三个月',
-          onClick(picker) {
-            const end = new Date()
-            const start = new Date()
-            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
-            picker.$emit('pick', [start, end])
-          }
-        }]
-      }
+      fromDeliverDate: '',
+      toDeliverDate: ''
+
     }
   },
   created() {
@@ -288,11 +265,27 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
-      const deliverDates = this.deliverDate
-      this.listQuery.fromDeliverDate = deliverDates[0]
-      this.listQuery.toDeliverDate = deliverDates[1]
-      const fromTime = new Date(deliverDates[0]).getTime()
-      const toTime = new Date(deliverDates[1]).getTime()
+      const fromDeliverDate = this.listQuery.fromDeliverDate
+      const toDeliverDate = this.listQuery.toDeliverDate
+
+      let tempCout = 0
+      if (fromDeliverDate === undefined || fromDeliverDate === null) {
+        tempCout++
+      }
+
+      if (toDeliverDate === undefined || toDeliverDate === null) {
+        tempCout++
+      }
+      if (tempCout === 1) {
+        this.$message({
+          message: '发货时间必须选择开始时间和结束时间',
+          type: 'error'
+        })
+        return
+      }
+
+      const fromTime = new Date(fromDeliverDate).getTime()
+      const toTime = new Date(toDeliverDate).getTime()
       if (toTime - fromTime > 3600 * 1000 * 24 * 30) {
         this.$message({
           message: '时间跨度不能超过30天',

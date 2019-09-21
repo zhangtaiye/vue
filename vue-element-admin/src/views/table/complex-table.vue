@@ -79,9 +79,14 @@
           <span>{{ scope.row.orderId }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="平台订单号" width="200px" align="center">
+      <el-table-column label="平台订单号" width="250px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.platformOrderId }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="平台名称" width="130px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.platformName }}</span>
         </template>
       </el-table-column>
       <el-table-column label="卖家账号" width="200px" align="center">
@@ -94,7 +99,7 @@
           <span>{{ scope.row.shippingService }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="币种" width="150px" align="center">
+      <el-table-column label="币种" width="80px" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.currency }}</span>
         </template>
@@ -104,15 +109,15 @@
           <span>{{ scope.row.totalPrice }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="发货日期" width="300px" align="center">
+      <el-table-column label="创建时间" width="200px" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.creationDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="发货日期" width="200px" align="center">
         <template slot-scope="scope">
           <span v-if="scope.row.deliverDate===null" />
           <span v-else>{{ scope.row.deliverDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" width="300px" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.creationDate | parseTime('{y}-{m}-{d} {h}:{i}:{s}') }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -411,8 +416,8 @@ export default {
     handleDownload() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['系统订单号', '平台订单号', '卖家账号', '币种', '订单总金额']
-        const filterVal = ['orderId', 'platformOrderId', 'sellerId', 'currency', 'totalPrice']
+        const tHeader = ['系统订单号', '平台订单号', '平台名称', '卖家账号', '币种', '订单总金额']
+        const filterVal = ['orderId', 'platformOrderId', 'platformName', 'sellerId', 'currency', 'totalPrice']
         const data = this.formatJson(filterVal, this.list)
         console.log(this.$refs.multipleTable.selection)
         excel.export_json_to_excel({

@@ -269,11 +269,11 @@ export default {
       const toDeliverDate = this.listQuery.toDeliverDate
 
       let tempCout = 0
-      if (fromDeliverDate === undefined || fromDeliverDate === null) {
+      if (fromDeliverDate === undefined || fromDeliverDate === null || fromDeliverDate === '') {
         tempCout++
       }
 
-      if (toDeliverDate === undefined || toDeliverDate === null) {
+      if (toDeliverDate === undefined || toDeliverDate === null || toDeliverDate === '') {
         tempCout++
       }
       if (tempCout === 1) {
@@ -298,7 +298,8 @@ export default {
     resetHandle() {
       this.listQuery.orderId = ''
       this.listQuery.platformOrderId = ''
-      this.deliverDate = []
+      this.listQuery.fromDeliverDate = ''
+      this.listQuery.toDeliverDate = ''
     },
     handleModifyStatus(row, status) {
       this.$message({

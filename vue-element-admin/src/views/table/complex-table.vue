@@ -3,6 +3,7 @@
     <div class="filter-container">
       <el-input v-model="listQuery.orderId" placeholder="系统订单号" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
       <el-input v-model="listQuery.platformOrderId" placeholder="平台订单号" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter" />
+      <el-date-picker v-model="deliverDate" type="daterange" align="right" class="filter-item" unlink-panels range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" :picker-options="pickerOptions" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
@@ -238,7 +239,35 @@ export default {
         timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      deliverDate: '',
+      pickerOptions: {
+        shortcuts: [{
+          text: '最近一周',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近一个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+            picker.$emit('pick', [start, end])
+          }
+        }, {
+          text: '最近三个月',
+          onClick(picker) {
+            const end = new Date()
+            const start = new Date()
+            start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+            picker.$emit('pick', [start, end])
+          }
+        }]
+      }
     }
   },
   created() {
@@ -259,11 +288,15 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1
+      const deliverDates = this.deliverDate
+      this.listQuery.fromDeliverDate = deliverDates[0]
+      this.listQuery.toDeliverDate = deliverDates[1]
       this.getList()
     },
     resetHandle() {
       this.listQuery.orderId = ''
       this.listQuery.platformOrderId = ''
+      this.listQuery.deliverDate = []
     },
     handleModifyStatus(row, status) {
       this.$message({

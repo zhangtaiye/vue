@@ -39,3 +39,11 @@ export function updateArticle(data) {
     data
   })
 }
+
+export function fetchOrderExcel(query) {
+  return request({
+    url: '/order/excel',
+    method: 'get',
+    params: query
+  })
+}

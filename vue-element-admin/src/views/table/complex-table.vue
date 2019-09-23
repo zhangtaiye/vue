@@ -172,7 +172,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { fetchList, fetchPv, createArticle, updateArticle, fetchOrderExcel } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -414,6 +414,14 @@ export default {
       })
     },
     handleDownload() {
+      fetchOrderExcel(this.listQuery).then(response => {
+        this.$message({
+          message: response.data,
+          type: 'success'
+        })
+      })
+    },
+    handleDownload2() {
       this.downloadLoading = true
       import('@/vendor/Export2Excel').then(excel => {
         const tHeader = ['系统订单号', '平台订单号', '平台名称', '卖家账号', '币种', '订单总金额']
